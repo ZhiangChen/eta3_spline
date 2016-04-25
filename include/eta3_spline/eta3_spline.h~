@@ -7,8 +7,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Odometry.h>
 
-#define max_vel 1.0
-#define max_omega 1.0
+#define vel 1.0
+#define omega 1.0
 
 class Eta3Traj
 {
@@ -24,15 +24,14 @@ public:
 private:
 	bool buildTraj();
 	double calTime(int index);// start from 1
-	bool buildXTraj(double t, int index, std::vector<double> & x_traj);
-	bool buildYTraj(double t, int index, std::vector<double> & y_traj);
-	bool buildTheta(double t, int index, std::vector<double> & theta_traj);
-	bool buildVel(double t, int index, std::vector<double> & veloity);
-	bool buildOmega(double t, int index, std::vector<double> & omega);
-	geometry_msgs::Quaternion convertTheta2Quat(double theta);
+	bool buildXTraj();
+	bool buildYTraj();
+	bool buildTheta();
+	bool buildVel();
+	bool buildOmega();
 
 	std::vector<geometry_msgs::PoseStamped> poses_;
-	std::vector<double> eta_;
+	std::vector<double> eta_v_;
 	std::vector<nav_msgs::Odometry> traj_;
 	double d_t_;
 	bool got_poses_;
