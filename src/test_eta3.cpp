@@ -21,9 +21,17 @@ int main(int argc, char** argv) {
     ros::Publisher x_publisher = nh.advertise<std_msgs::Float32>("/x_position", 1);
     ros::Publisher y_publisher = nh.advertise<std_msgs::Float32>("/y_position", 1);
     ros::Publisher theta_publisher = nh.advertise<std_msgs::Float32>("/des_theta_position", 1);
-   // std::vector<double>
+    std::vector<double> eta;
+    std::vector<double> kappa;
+    eta.resize(6);
+    eta[0] = 5;
+    eta[1] = 5;
+    eta[2] = 5;
+    eta[3] = 5;
+    eta[4] = 5;
+    eta[5] = 5;
 
-    Eta3Traj Et;
+    Eta3Traj Et(eta,kappa,0.02);
     std::vector<geometry_msgs::PointStamped> poses;
     poses.clear();
     geometry_msgs::PointStamped pose;
@@ -63,23 +71,6 @@ int main(int argc, char** argv) {
     	ROS_ERROR("Failed to get the trajectory!");
     	return 0;
     }
-
-    int n = traj.size();
-    int i=0;
-    std_msgs::Float32 x,y,theta;
-    while (ros::ok() && i<n) 
-    {
-    	//x.data = traj[i].pose.pose.position.x;
-    	//y.data = traj[i].pose.pose.position.y;
-    	theta.data = convertPlanarQuat2Psi(traj[i].pose.pose.orientation);
-    	//x_publisher.publish(x);
-    	//y_publisher.publish(y);
-    	desired_state_publisher.publish(traj[i]);
-    	theta_publisher.publish(theta);
-    	//desired_state_publisher.publish(traj[i++]);
-    	i++;
-    	ros::Duration(d_t).sleep();
-    }
-
+    Et.runTraj2();
     return 0;
 }

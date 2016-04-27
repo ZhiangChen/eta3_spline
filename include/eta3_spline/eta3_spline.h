@@ -1,12 +1,14 @@
 /// Using eta3 spline to interpolate the trajectory for mobile robot
 /// Zhiang Chen, 4/2016
-/// Xinyu Li
 /// CWRU EECS376, Prof.Wyatt Newman
 
 #ifndef ETA3_SPLINE_H_
 #define ETA3_SPLINE_H_
+#include <ros/ros.h>
 #include <geometry_msgs/PointStamped.h>
 #include <nav_msgs/Odometry.h>
+#include <std_msgs/Bool.h>
+#include <std_msgs/Float32.h>
 
 #define max_vel 1.0
 #define max_omega 1.0
@@ -21,19 +23,22 @@ public:
 
 	void setPoses(std::vector<geometry_msgs::PointStamped> poses);
 	bool getTraj(std::vector<nav_msgs::Odometry> &traj,double &d_t);
-	//bool brake(std::vector<nav_msgs::Odometry> traj, double t);
-	//bool pause(std::vector<nav_msgs::Odometry> &traj, double t);
+	bool runTraj();
+	bool runTraj2();
+
 private:
 	bool buildTraj();
 	double calTime(int index);// start from 1
 	bool buildXTraj(double t, int index, std::vector<double> & x_traj);
 	bool buildYTraj(double t, int index, std::vector<double> & y_traj);
 	bool buildTheta(double t, int index, std::vector<double> & theta_traj);
-	bool buildVel(double t, int index, std::vector<double> & velocity);
+	bool buildVel(double t, int index, std::vector<double> theta_traj, std::vector<double> & velocity);
 	bool buildOmega(double t, int index, std::vector<double> & omega);
 	geometry_msgs::Quaternion convertTheta2Quat(double theta);
+	double convertPlanarQuat2Psi(geometry_msgs::Quaternion quaternion);
 	double convertTheta(double theta);
 	double positiveTheta(double theta);
+	void brakeCallback(const std_msgs::Bool brake);
 
 	std::vector<geometry_msgs::PointStamped> poses_;
 	std::vector<double> eta_;
@@ -47,10 +52,18 @@ private:
 	int poses_nm_;
 	std::vector<double> alpha_;
 	std::vector<double> beta_;
-
 	geometry_msgs::PointStamped start_pose_;
 	geometry_msgs::PointStamped end_pose_;
+	int current_i_;
+	ros::NodeHandle nh_;
+	ros::Publisher desired_state_publisher_;
+	bool got_brake_;
 
+	ros::Subscriber brake_subscriber_;
+	ros::Publisher x_publisher_; 
+    ros::Publisher y_publisher_;
+    ros::Publisher theta_publisher_;
+    ros::Publisher v_publisher_;
 };
 
 #endif

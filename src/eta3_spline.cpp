@@ -106,6 +106,74 @@ bool Eta3Traj::getTraj(std::vector<nav_msgs::Odometry> &traj,double &d_t)
 	return true;
 }
 
+/// start running trajectory
+bool Eta3Traj::runTraj()
+{
+	ROS_INFO("Running trajectory. To brake: rostopic pub /brake std_msgs/Bool true ");
+	desired_state_publisher_ = nh_.advertise<nav_msgs::Odometry>("/desState", 1,true);
+	int n = traj_.size();
+	current_i_ = 0;
+	got_brake_ = false;
+	brake_subscriber_ = nh_.subscribe("/brake",1,&Eta3Traj::brakeCallback,this); 
+	while (ros::ok() && current_i_<n && !got_brake_) 
+    {
+    	desired_state_publisher_.publish(traj_[current_i_++]);
+    	ros::spinOnce();
+    	ros::Duration(d_t_).sleep();
+    }
+    if (current_i_ < n)
+    	return false;
+    else
+    	ROS_INFO("Reached the goal.");
+	return true;
+}
+
+/// start running trajectory, and publishing the desired pose at the same time
+bool Eta3Traj::runTraj2()
+{
+	ROS_INFO("Running trajectory. To brake: rostopic pub /brake std_msgs/Bool true ");
+	desired_state_publisher_ = nh_.advertise<nav_msgs::Odometry>("/desState", 1,true);
+	x_publisher_ = nh_.advertise<std_msgs::Float32>("/des_x_position", 1, true);
+    y_publisher_ = nh_.advertise<std_msgs::Float32>("/des_y_position", 1, true);
+    theta_publisher_ = nh_.advertise<std_msgs::Float32>("/des_theta_position", 1, true);
+    v_publisher_ = nh_.advertise<std_msgs::Float32>("/des_velocity", 1, true);
+    ROS_INFO("The topic names are: /des_x_position, /des_y_position, /des_theta_position, /des_velocity");
+	int n = traj_.size();
+	current_i_ = 0;
+	got_brake_ = false;
+	std_msgs::Float32 x,y,theta,v;
+	brake_subscriber_ = nh_.subscribe("/brake",1,&Eta3Traj::brakeCallback,this); 
+	while (ros::ok() && current_i_<n && !got_brake_) 
+    {
+    	x.data = traj_[current_i_].pose.pose.position.x;
+    	y.data = traj_[current_i_].pose.pose.position.y;
+    	v.data = traj_[current_i_].twist.twist.linear.x;
+    	theta.data = convertPlanarQuat2Psi(traj_[current_i_].pose.pose.orientation);
+    	x_publisher_.publish(x);
+    	y_publisher_.publish(y);
+    	theta_publisher_.publish(theta);
+    	v_publisher_.publish(v);
+    	desired_state_publisher_.publish(traj_[current_i_++]);
+    	ros::spinOnce();
+    	ros::Duration(d_t_).sleep();
+    }
+    if (current_i_ < n)
+    	return false;
+    else
+    	ROS_INFO("Reached the goal.");
+	return true;
+}
+
+void Eta3Traj::brakeCallback(const std_msgs::Bool brake)
+{
+	if (brake.data == true)
+	{
+		ROS_WARN("Brake!");
+		got_brake_ = true;
+	}
+}
+
+
 /// build the trajectory based on eta3-spline
 bool Eta3Traj::buildTraj()
 {
@@ -153,7 +221,7 @@ bool Eta3Traj::buildTraj()
 			ROS_WARN("Failed to build theta trajectory!");
 			return false;
 		}
-		buildVel(t,i,velocity);
+		buildVel(t,i,theta_traj,velocity);
 		buildOmega(t,i,omega);
 		// the interpolated points on one path should be consistent
 		int x_n = x_traj.size();
@@ -300,13 +368,22 @@ bool Eta3Traj::buildTheta(double t, int index, std::vector<double> & theta_traj)
 	return true;	
 }
 /// built the translational velocity from point (index-1) to point index
-bool Eta3Traj::buildVel(double t, int index, std::vector<double> & velocity)
+bool Eta3Traj::buildVel(double t, int index, std::vector<double> theta_traj, std::vector<double> & velocity)
 {
 	int nm = t/d_t_;
+	double d_u = 1.0/nm;
+	double u=0;
 	velocity.resize(nm);
+	double dx_du;
 	for (int j=0; j<nm; j++)
 	{
-		velocity[j] = 0; // when using steering algorithm
+		//velocity[j] = 0; // when using steering algorithm
+		dx_du = alpha_[1] + 2*alpha_[2]*u + 3*alpha_[3]*u*u + 4*alpha_[4]*u*u*u
+				+5*alpha_[5]*u*u*u*u + 6*alpha_[6]*u*u*u*u*u + 7*alpha_[7]*u*u*u*u*u*u;
+
+		velocity[j] = dx_du/t/cos(theta_traj[j]);
+
+		u += d_u;
 	}
 	return true;
 }
@@ -318,6 +395,7 @@ bool Eta3Traj::buildOmega(double t, int index, std::vector<double> & omega)
 	for (int j=0; j<nm; j++)
 	{
 		omega[j] = 0; // when using steering algorithm
+		// Or omega = cos(theta)^2*d(dy_dx)/dt
 	}
 	return true;
 }
@@ -350,4 +428,11 @@ double Eta3Traj::positiveTheta(double dang) {
     	dang = dang+2*M_PI;
     }
     return dang;
+}
+
+double Eta3Traj::convertPlanarQuat2Psi(geometry_msgs::Quaternion quaternion) {
+    double quat_z = quaternion.z;
+    double quat_w = quaternion.w;
+    double psi = 2.0 * atan2(quat_z, quat_w); // cheap conversion from quaternion to heading for planar motion
+    return psi;
 }

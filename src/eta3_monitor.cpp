@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
     	ros::Duration(0.5).sleep();
     }
     ROS_INFO("Starting publishing...");
+    ROS_INFO("The topic names are: /x_position, /y_position, /theta_position, /velocity, /omega");
     while(ros::ok())
     {
     	ros::spinOnce();
