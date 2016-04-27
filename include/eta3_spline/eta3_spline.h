@@ -33,7 +33,7 @@ private:
 	bool buildOmega(double t, int index, std::vector<double> & omega);
 	geometry_msgs::Quaternion convertTheta2Quat(double theta);
 	double convertTheta(double theta);
-	double min_theta(double theta);
+	double positiveTheta(double theta);
 
 	std::vector<geometry_msgs::PointStamped> poses_;
 	std::vector<double> eta_;

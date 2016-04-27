@@ -169,6 +169,7 @@ bool Eta3Traj::buildTraj()
 		}
 
 	}
+	return true;
 }
 
 /// calculate the time from point (index-1) to point index
@@ -202,32 +203,23 @@ bool Eta3Traj::buildXTraj(double t, int index, std::vector<double> & x_traj)
 	alpha_[0] = x_A;
 	alpha_[1] = eta_[0]*cos(theta_A);
 	alpha_[2] = 0.5*eta_[2]*cos(theta_A)-0.5*eta_[0]*eta_[0]*k_start_*sin(theta_A);
-	alpha_[3] = 1.0/6.0*cos(theta_A)-1.0/6.0*(eta_[0]*eta_[0]*eta_[0]*k_start_dot_
-				+3*eta_[0]*eta_[2]*k_start_)*sin(theta_A);
-	alpha_[4] = 35*(x_B-x_A)-(20*eta_[0]+5*eta_[2]+2.0/3.0*eta_[4])*cos(theta_A)
-				+(5*eta_[0]*eta_[0]*k_start_+2.0/3.0*eta_[0]*eta_[0]*eta_[0]*k_start_dot_
-				+2*eta_[0]*eta_[2]*k_start_)*sin(theta_A)
-				-(15*eta_[1]-5.0/2.0*eta_[3]+1.0/6.0*eta_[5])*cos(theta_B)
-				-(5.0/2.0*eta_[1]*eta_[1]*k_end_-1.0/6.0*eta_[1]*eta_[1]*k_end_dot_
-				-0.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
-	alpha_[5] = -84*(x_B-x_A)+(45*eta_[0]+10*eta_[2]+eta_[4])*cos(theta_A)
-				-(10*eta_[0]*eta_[0]*k_start_+eta_[0]*eta_[0]*eta_[0]*k_start_dot_
-				+ 3*eta_[0]*eta_[2]*k_start_)*sin(theta_A);
-				+(39*eta_[1]-7*eta_[3]+0.5*eta_[5])*cos(theta_B)
-				+(7*eta_[1]*eta_[1]*k_end_-0.5*eta_[1]*eta_[1]*eta_[1]*k_end_dot_
+	alpha_[3] = 1.0/6.0*eta_[4]*cos(theta_A)-1.0/6.0*(eta_[0]*eta_[0]*eta_[0]*k_start_dot_+3*eta_[0]*eta_[2]*k_start_)*sin(theta_A);
+	alpha_[4] = 35*(x_B-x_A)-(20*eta_[0]+5*eta_[2]+2.0/3.0*eta_[4])*cos(theta_A)+(5*eta_[0]*eta_[0]*k_start_
+				+2.0/3.0*eta_[0]*eta_[0]*eta_[0]*k_start_dot_+2*eta_[0]*eta_[2]*k_start_)*sin(theta_A)
+	            -(15*eta_[1]-2.5*eta_[3]+1.0/6.0*eta_[5])*cos(theta_B)-(2.5*eta_[1]*eta_[1]*k_end_-1.0/6.0*eta_[1]*eta_[1]*eta_[1]*k_end_dot_
+	            -0.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
+	alpha_[5] = -84*(x_B-x_A)+(45*eta_[0]+10*eta_[2]+eta_[4])*cos(theta_A)-(10*eta_[0]*eta_[0]*k_start_
+				+eta_[0]*eta_[0]*eta_[0]*k_start_dot_+3*eta_[0]*eta_[2]*k_start_)*sin(theta_A)
+				+(39*eta_[1]-7*eta_[3]+0.5*eta_[5])*cos(theta_B)+(7*eta_[1]*eta_[1]*k_end_-1.0/2.0*eta_[1]*eta_[1]*eta_[1]*k_end_dot_
 				-1.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
-	alpha_[6] =  70*(x_B-x_A)-(36*eta_[0]+7.5*eta_[2]+2.0/3.0*eta_[4])*cos(theta_A)
+	alpha_[6] = 70*(x_B-x_A)-(36*eta_[0]+7.5*eta_[2]+2.0/3.0*eta_[4])*cos(theta_A)
 				+(7.5*eta_[0]*eta_[0]*k_start_+2.0/3.0*eta_[0]*eta_[0]*eta_[0]*k_start_dot_
-				+ 2*eta_[0]*eta_[2]*k_start_)*sin(theta_A);
-				-(34*eta_[1]-13.0/2.0*eta_[3]+1.0/2.0*eta_[5])*cos(theta_B)
-				-(13.0/2.0*eta_[1]*eta_[1]*k_end_-1.0/2.0*eta_[1]*eta_[1]*eta_[1]*k_end_dot_
-				-1.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
-	alpha_[7] =  -20*(x_B-x_A)+(10*eta_[0]+2*eta_[2]+1.0/6.0*eta_[4])*cos(theta_A)
-				-(2*eta_[0]*eta_[0]*k_start_+1.0/6.0*eta_[0]*eta_[0]*eta_[0]*k_start_dot_
-				+ 0.5*eta_[0]*eta_[2]*k_start_)*sin(theta_A);
-				+(10*eta_[1]-2.0*eta_[3]+1.0/6.0*eta_[5])*cos(theta_B)
-				+(2.0*eta_[1]*eta_[1]*k_end_-1.0/6.0*eta_[1]*eta_[1]*eta_[1]*k_end_dot_
-				-0.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
+				+2*eta_[0]*eta_[2]*k_start_)*sin(theta_A)-(34*eta_[1]-6.5*eta_[3]+0.5*eta_[5])*cos(theta_B)
+				-(6.5*eta_[1]*eta_[1]*k_end_-1.0/2.0*eta_[1]*eta_[1]*eta_[1]*k_end_dot_-1.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
+	alpha_[7] = -20*(x_B-x_A)+(10*eta_[0]+2*eta_[2]+1.0/6.0*eta_[4])*cos(theta_A)
+	            -(2*eta_[0]*eta_[0]*eta_[0]*k_start_+1.0/6.0*eta_[0]*eta_[0]*eta_[0]*k_start_dot_+1.0/2.0*eta_[0]*eta_[2]*k_start_)*sin(theta_A)
+	            +(10*eta_[1]-2*eta_[3]+1.0/6.0*eta_[5])*cos(theta_B)+(2*eta_[1]*eta_[1]*k_end_
+	            -1.0/6.0*eta_[1]*eta_[1]*eta_[1]*k_end_dot_-0.5*eta_[1]*eta_[3]*k_end_)*sin(theta_B);
 
 	int nm = t/d_t_;
 	double d_u = 1.0/nm;
@@ -311,13 +303,10 @@ bool Eta3Traj::buildTheta(double t, int index, std::vector<double> & theta_traj)
 bool Eta3Traj::buildVel(double t, int index, std::vector<double> & velocity)
 {
 	int nm = t/d_t_;
-	double d_u = 1.0/nm;
-	double u=0;
 	velocity.resize(nm);
 	for (int j=0; j<nm; j++)
 	{
 		velocity[j] = 0; // when using steering algorithm
-		u += d_u;
 	}
 	return true;
 }
@@ -325,13 +314,10 @@ bool Eta3Traj::buildVel(double t, int index, std::vector<double> & velocity)
 bool Eta3Traj::buildOmega(double t, int index, std::vector<double> & omega)
 {
 	int nm = t/d_t_;
-	double d_u = 1.0/nm;
-	double u=0;
 	omega.resize(nm);
 	for (int j=0; j<nm; j++)
 	{
 		omega[j] = 0; // when using steering algorithm
-		u += d_u;
 	}
 	return true;
 }
@@ -350,16 +336,18 @@ geometry_msgs::Quaternion Eta3Traj::convertTheta2Quat(double theta)
 double Eta3Traj::convertTheta(double theta)
 {
 	double c_theta;
-	c_theta = min_theta(theta);
-	if (c_theta<0)
+	c_theta = positiveTheta(theta);
+	while(c_theta>2*M_PI)
 	{
-		c_theta = 2*M_PI - c_theta;
+		c_theta -= 2*M_PI;
 	}
 	return c_theta;
 }
 
-double Eta3Traj::min_theta(double dang) {
-    while (dang > M_PI) dang -= 2.0 * M_PI;
-    while (dang < -M_PI) dang += 2.0 * M_PI;
+double Eta3Traj::positiveTheta(double dang) {
+    while (dang<0)
+    {
+    	dang = dang+2*M_PI;
+    }
     return dang;
 }
