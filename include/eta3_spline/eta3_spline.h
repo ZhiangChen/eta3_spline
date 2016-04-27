@@ -1,6 +1,5 @@
 /// Using eta3 spline to interpolate the trajectory for mobile robot
 /// Zhiang Chen, 4/2016
-/// CWRU EECS376, Prof.Wyatt Newman
 
 #ifndef ETA3_SPLINE_H_
 #define ETA3_SPLINE_H_
