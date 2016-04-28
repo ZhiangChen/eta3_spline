@@ -6,6 +6,7 @@
 #include <geometry_msgs/PointStamped.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float32.h>
+#include <nav_msgs/Path.h>
 
 double convertPlanarQuat2Psi(geometry_msgs::Quaternion quaternion) {
     double quat_z = quaternion.z;
@@ -122,8 +123,8 @@ int main(int argc, char** argv) {
 
     kappa[0] = 0; 
     kappa[1] = 0;
-    kappa[2] = 1;
-    kappa[3] = 1;
+    kappa[2] = 0;
+    kappa[3] = 0;
 
     Et.setEta(eta);
     Et.setKappa(kappa);
@@ -159,9 +160,9 @@ int main(int argc, char** argv) {
     eta[4] = 4;
     eta[5] = 4;
 
-    kappa[0] = 1; 
-    kappa[1] = 1;
-    kappa[2] = 0.5;
+    kappa[0] = 0; 
+    kappa[1] = 0;
+    kappa[2] = 0;
     kappa[3] = 0;
 
     Et.setEta(eta);
@@ -198,9 +199,9 @@ int main(int argc, char** argv) {
     eta[4] = 0;
     eta[5] = 0;
 
-    kappa[0] = 0.5; 
+    kappa[0] = 0; 
     kappa[1] = 0;
-    kappa[2] = 0.5;
+    kappa[2] = 0;
     kappa[3] = 0;
 
     Et.setEta(eta);
@@ -229,6 +230,24 @@ int main(int argc, char** argv) {
     {
     	traj_t.push_back(traj[j]);
     }
+
+    /*nav_msgs::Path g_path;
+	geometry_msgs::PoseStamped g_pose;
+    ros::Publisher path_publisher = nh.advertise<nav_msgs::Path>("/path", 1);
+    n = traj_t.size();
+    nav_msgs::Odometry odom;
+    g_path.header.frame_id = "odom_frame";
+    for (int j=0; j<n; j++)
+    {
+    	odom = traj_t[j];
+    	g_pose.pose = odom.pose.pose;
+		g_path.poses.push_back(g_pose);
+    }
+    while(ros::ok())
+    {
+    	path_publisher.publish(g_path);
+    	ros::Duration(0.02).sleep();
+    }*/
     Et.runTraj2(traj_t);
     return 0;
 }

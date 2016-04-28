@@ -11,7 +11,7 @@
 
 #define max_vel 1.0
 #define max_omega 1.0
-#define Time_K 30
+#define Time_K 5
 
 class Eta3Traj
 {
