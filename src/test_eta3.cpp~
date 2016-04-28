@@ -35,12 +35,12 @@ int main(int argc, char** argv) {
     kappa.resize(4);
     int n;
 
-    eta[0]=5;
-    eta[1]=5;
-    eta[2]=2;
-    eta[3]=2;
-    eta[4]=2;
-    eta[5]=2;
+    eta[0]=0.5;
+    eta[1]=0.5;
+    eta[2]=0;
+    eta[3]=0;
+    eta[4]=0;
+    eta[5]=0;
     Et.setEta(eta);
 
     poses.clear();
