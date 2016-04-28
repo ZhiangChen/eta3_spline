@@ -11,7 +11,7 @@
 
 #define max_vel 1.0
 #define max_omega 1.0
-#define Time_K 1.5
+#define Time_K 30
 
 class Eta3Traj
 {
@@ -24,8 +24,8 @@ public:
 	void setKappa(std::vector<double> kappa_v);
 	void setPoses(std::vector<geometry_msgs::PointStamped> poses);
 	bool getTraj(std::vector<nav_msgs::Odometry> &traj,double &d_t);
-	bool runTraj();
-	bool runTraj2();
+	bool runTraj(std::vector<nav_msgs::Odometry> traj);
+	bool runTraj2(std::vector<nav_msgs::Odometry> traj);
 
 private:
 	bool buildTraj();

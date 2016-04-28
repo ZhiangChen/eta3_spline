@@ -140,17 +140,17 @@ bool Eta3Traj::getTraj(std::vector<nav_msgs::Odometry> &traj,double &d_t)
 }
 
 /// start running trajectory
-bool Eta3Traj::runTraj()
+bool Eta3Traj::runTraj(std::vector<nav_msgs::Odometry> traj)
 {
 	ROS_INFO("Running trajectory. To brake: rostopic pub /brake std_msgs/Bool true ");
 	desired_state_publisher_ = nh_.advertise<nav_msgs::Odometry>("/desState", 1,true);
-	int n = traj_.size();
+	int n = traj.size();
 	current_i_ = 0;
 	got_brake_ = false;
 	brake_subscriber_ = nh_.subscribe("/brake",1,&Eta3Traj::brakeCallback,this); 
 	while (ros::ok() && current_i_<n && !got_brake_) 
     {
-    	desired_state_publisher_.publish(traj_[current_i_++]);
+    	desired_state_publisher_.publish(traj[current_i_++]);
     	ros::spinOnce();
     	ros::Duration(d_t_).sleep();
     }
@@ -162,7 +162,7 @@ bool Eta3Traj::runTraj()
 }
 
 /// start running trajectory, and publishing the desired pose at the same time
-bool Eta3Traj::runTraj2()
+bool Eta3Traj::runTraj2(std::vector<nav_msgs::Odometry> traj)
 {
 	ROS_INFO("Running trajectory. To brake: rostopic pub /brake std_msgs/Bool true ");
 	desired_state_publisher_ = nh_.advertise<nav_msgs::Odometry>("/desState", 1,true);
@@ -171,22 +171,22 @@ bool Eta3Traj::runTraj2()
     theta_publisher_ = nh_.advertise<std_msgs::Float32>("/des_theta_position", 1, true);
     v_publisher_ = nh_.advertise<std_msgs::Float32>("/des_velocity", 1, true);
     ROS_INFO("The topic names are: /des_x_position, /des_y_position, /des_theta_position, /des_velocity");
-	int n = traj_.size();
+	int n = traj.size();
 	current_i_ = 0;
 	got_brake_ = false;
 	std_msgs::Float32 x,y,theta,v;
 	brake_subscriber_ = nh_.subscribe("/brake",1,&Eta3Traj::brakeCallback,this); 
 	while (ros::ok() && current_i_<n && !got_brake_) 
     {
-    	x.data = traj_[current_i_].pose.pose.position.x;
-    	y.data = traj_[current_i_].pose.pose.position.y;
-    	v.data = traj_[current_i_].twist.twist.linear.x;
-    	theta.data = convertPlanarQuat2Psi(traj_[current_i_].pose.pose.orientation);
+    	x.data = traj[current_i_].pose.pose.position.x;
+    	y.data = traj[current_i_].pose.pose.position.y;
+    	v.data = traj[current_i_].twist.twist.linear.x;
+    	theta.data = convertPlanarQuat2Psi(traj[current_i_].pose.pose.orientation);
     	x_publisher_.publish(x);
     	y_publisher_.publish(y);
     	theta_publisher_.publish(theta);
     	v_publisher_.publish(v);
-    	desired_state_publisher_.publish(traj_[current_i_++]);
+    	desired_state_publisher_.publish(traj[current_i_++]);
     	ros::spinOnce();
     	ros::Duration(d_t_).sleep();
     }

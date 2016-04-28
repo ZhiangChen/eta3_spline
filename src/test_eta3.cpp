@@ -23,48 +23,44 @@ int main(int argc, char** argv) {
     ros::Publisher theta_publisher = nh.advertise<std_msgs::Float32>("/des_theta_position", 1);
     std::vector<double> eta;
     std::vector<double> kappa;
-    eta.resize(6);
-    eta[0] = 5;
-    eta[1] = 5;
-    eta[2] = 5;
-    eta[3] = 5;
-    eta[4] = 5;
-    eta[5] = 5;
-
-    Eta3Traj Et;
-    Et.setEta(eta);
+    double d_t;
+    bool got_traj;
     std::vector<geometry_msgs::PointStamped> poses;
-    poses.clear();
+    Eta3Traj Et;
     geometry_msgs::PointStamped pose;
+    std::vector<nav_msgs::Odometry> traj;
+    std::vector<nav_msgs::Odometry> traj_t;
+    eta.resize(6);
+    kappa.resize(4);
+    int n;
+
+//path1
+    eta[0] = 4.27;
+    eta[1] = 4.27;
+    eta[2] = 0;
+    eta[3] = 0;
+    eta[4] = 0;
+    eta[5] = 0;
+
+    kappa[0] = 0; 
+    kappa[1] = 0;
+    kappa[2] = 0;
+    kappa[3] = 0;
+
+    Et.setEta(eta);
+    Et.setKappa(kappa);
+    poses.clear();
     pose.header.frame_id = "des_frame";
     pose.point.x = 0;
     pose.point.y = 0;
     pose.point.z = 0;
     poses.push_back(pose);
 
-    pose.point.x = 10;
-    pose.point.y = 0;
-    pose.point.z = 0.785;
-    poses.push_back(pose);
-
-    pose.point.x = 10;
-    pose.point.y = 10;
-    pose.point.z = 2.355;
-    poses.push_back(pose);
-
-    pose.point.x = 0;
-    pose.point.y = 10;
-    pose.point.z = -2.355;
-    poses.push_back(pose);
-
-    pose.point.x = 0;
-    pose.point.y = 0;
+    pose.point.x = 4;
+    pose.point.y = 1.5;
     pose.point.z = 0;
     poses.push_back(pose);
-
-    std::vector<nav_msgs::Odometry> traj;
-    double d_t;
-    bool got_traj=false;
+    got_traj=false;
     Et.setPoses(poses);
     got_traj = Et.getTraj(traj,d_t); // It cannot be used to set the d_t but get the d_t
     if(!got_traj)
@@ -72,6 +68,167 @@ int main(int argc, char** argv) {
     	ROS_ERROR("Failed to get the trajectory!");
     	return 0;
     }
-    Et.runTraj2();
+    n = traj.size();
+    for(int j=0; j<n; j++)
+    {
+    	traj_t.push_back(traj[j]);
+    }
+// path2
+    eta[0] = 0;
+    eta[1] = 0;
+    eta[2] = 0;
+    eta[3] = 0;
+    eta[4] = 0;
+    eta[5] = 0;
+
+    kappa[0] = 0; 
+    kappa[1] = 0;
+    kappa[2] = 0;
+    kappa[3] = 0;
+
+    Et.setEta(eta);
+    Et.setKappa(kappa);
+    poses.clear();
+    pose.header.frame_id = "des_frame";
+    pose.point.x = 4;
+    pose.point.y = 1.5;
+    pose.point.z = 0;
+    poses.push_back(pose);
+
+    pose.point.x = 5.5;
+    pose.point.y = 1.5;
+    pose.point.z = 0;
+    poses.push_back(pose);
+    got_traj=false;
+    Et.setPoses(poses);
+    got_traj = Et.getTraj(traj,d_t); // It cannot be used to set the d_t but get the d_t
+    if(!got_traj)
+    {
+    	ROS_ERROR("Failed to get the trajectory!");
+    	return 0;
+    }
+    n = traj.size();
+    for(int j=0; j<n; j++)
+    {
+    	traj_t.push_back(traj[j]);
+    }
+// path3
+    eta[0] = 1.88;
+    eta[1] = 1.88;
+    eta[2] = 0;
+    eta[3] = 0;
+    eta[4] = 0;
+    eta[5] = 0;
+
+    kappa[0] = 0; 
+    kappa[1] = 0;
+    kappa[2] = 1;
+    kappa[3] = 1;
+
+    Et.setEta(eta);
+    Et.setKappa(kappa);
+    poses.clear();
+    pose.header.frame_id = "des_frame";
+    pose.point.x = 5.5;
+    pose.point.y = 1.5;
+    pose.point.z = 0;
+    poses.push_back(pose);
+
+    pose.point.x = 7.4377;
+    pose.point.y = 1.8235;
+    pose.point.z = 0.6667;
+    poses.push_back(pose);
+    got_traj=false;
+    Et.setPoses(poses);
+    got_traj = Et.getTraj(traj,d_t); // It cannot be used to set the d_t but get the d_t
+    if(!got_traj)
+    {
+    	ROS_ERROR("Failed to get the trajectory!");
+    	return 0;
+    }
+    n = traj.size();
+    for(int j=0; j<n; j++)
+    {
+    	traj_t.push_back(traj[j]);
+    }
+// path4
+    eta[0] = 7;
+    eta[1] = 10;
+    eta[2] = 10;
+    eta[3] = -10;
+    eta[4] = 4;
+    eta[5] = 4;
+
+    kappa[0] = 1; 
+    kappa[1] = 1;
+    kappa[2] = 0.5;
+    kappa[3] = 0;
+
+    Et.setEta(eta);
+    Et.setKappa(kappa);
+    poses.clear();
+    pose.header.frame_id = "des_frame";
+    pose.point.x = 7.4377;
+    pose.point.y = 1.8235;
+    pose.point.z = 0.6667;
+    poses.push_back(pose);
+
+    pose.point.x = 7.8;
+    pose.point.y = 4.3;
+    pose.point.z = 1.8;
+    poses.push_back(pose);
+    got_traj=false;
+    Et.setPoses(poses);
+    got_traj = Et.getTraj(traj,d_t); // It cannot be used to set the d_t but get the d_t
+    if(!got_traj)
+    {
+    	ROS_ERROR("Failed to get the trajectory!");
+    	return 0;
+    }
+    n = traj.size();
+    for(int j=0; j<n; j++)
+    {
+    	traj_t.push_back(traj[j]);
+    }
+// path5
+    eta[0] = 2.98;
+    eta[1] = 2.98;
+    eta[2] = 0;
+    eta[3] = 0;
+    eta[4] = 0;
+    eta[5] = 0;
+
+    kappa[0] = 0.5; 
+    kappa[1] = 0;
+    kappa[2] = 0.5;
+    kappa[3] = 0;
+
+    Et.setEta(eta);
+    Et.setKappa(kappa);
+    poses.clear();
+    pose.header.frame_id = "des_frame";
+    pose.point.x = 7.8;
+    pose.point.y = 4.3;
+    pose.point.z = 1.8;
+    poses.push_back(pose);
+
+    pose.point.x = 5.4581;
+    pose.point.y = 5.8064;
+    pose.point.z = 3.3416;
+    poses.push_back(pose);
+    got_traj=false;
+    Et.setPoses(poses);
+    got_traj = Et.getTraj(traj,d_t); // It cannot be used to set the d_t but get the d_t
+    if(!got_traj)
+    {
+    	ROS_ERROR("Failed to get the trajectory!");
+    	return 0;
+    }
+    n = traj.size();
+    for(int j=0; j<n; j++)
+    {
+    	traj_t.push_back(traj[j]);
+    }
+    Et.runTraj2(traj_t);
     return 0;
 }

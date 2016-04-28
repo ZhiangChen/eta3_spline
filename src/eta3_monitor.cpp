@@ -3,6 +3,8 @@
 
 #include <ros/ros.h> 
 #include <nav_msgs/Odometry.h>
+#include <nav_msgs/Path.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float32.h>
 double convertPlanarQuat2Psi(geometry_msgs::Quaternion quaternion);
 
@@ -11,6 +13,8 @@ std_msgs::Float32 g_y;
 std_msgs::Float32 g_theta;
 std_msgs::Float32 g_v;
 std_msgs::Float32 g_o;
+nav_msgs::Path g_path;
+geometry_msgs::PoseStamped g_pose;
 bool g_got_odom = false;
 
 void monitorCallback(const nav_msgs::Odometry odom)
@@ -21,6 +25,9 @@ void monitorCallback(const nav_msgs::Odometry odom)
 	g_theta.data = convertPlanarQuat2Psi(odom.pose.pose.orientation);
 	g_v.data = odom.twist.twist.linear.x;
 	g_o.data = odom.twist.twist.angular.z;
+	
+	g_pose.pose = odom.pose.pose;
+	g_path.poses.push_back(g_pose);
 }
 
 int main(int argc, char** argv) {
@@ -33,7 +40,9 @@ int main(int argc, char** argv) {
     ros::Publisher theta_publisher = nh.advertise<std_msgs::Float32>("/theta_position", 1);
     ros::Publisher v_publisher = nh.advertise<std_msgs::Float32>("/velocity", 1);
     ros::Publisher o_publisher = nh.advertise<std_msgs::Float32>("/omega", 1);
+    ros::Publisher path_publisher = nh.advertise<nav_msgs::Path>("/path", 1);
 
+    g_path.header.frame_id = "odom_frame";
     while(!g_got_odom)  
     {
     	ROS_INFO("waiting for odom");
@@ -50,6 +59,7 @@ int main(int argc, char** argv) {
     	theta_publisher.publish(g_theta);
     	v_publisher.publish(g_v);
     	o_publisher.publish(g_o);
+    	path_publisher.publish(g_path);
     	ros::Duration(0.02).sleep();
     }
 
