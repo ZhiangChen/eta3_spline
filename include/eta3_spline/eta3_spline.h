@@ -18,8 +18,10 @@ class Eta3Traj
 public:
 	Eta3Traj(); // default d_t; default etas
 	Eta3Traj(double d_t);
-	Eta3Traj(std::vector<double> eta_v, std::vector<double> kappa_v,double d_t);
+	Eta3Traj(std::vector<double> eta_v, std::vector<double> kappa_v, double d_t);
 
+	void setEta(std::vector<double> eta_v);
+	void setKappa(std::vector<double> kappa_v);
 	void setPoses(std::vector<geometry_msgs::PointStamped> poses);
 	bool getTraj(std::vector<nav_msgs::Odometry> &traj,double &d_t);
 	bool runTraj();

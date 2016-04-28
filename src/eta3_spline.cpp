@@ -82,6 +82,39 @@ void Eta3Traj::setPoses(std::vector<geometry_msgs::PointStamped> poses)
 	ROS_INFO("Got poses with %d points.", poses_nm_);
 }
 
+/// set etas
+void Eta3Traj::setEta(std::vector<double> eta_v)
+{
+	int n = eta_v.size();
+	if(n!=6)
+	{
+		ROS_ERROR("Wrong etas! Using default etas...");
+		return;
+	}
+	else 
+		eta_ = eta_v;
+	ROS_INFO("Set eta done.");
+}
+
+/// set kappas
+void Eta3Traj::setKappa(std::vector<double> kappa_v)
+{
+	int n = kappa_v.size();
+	if(n!=4)
+	{
+		ROS_ERROR("Wrong kappas! Using default kappas");
+		return;
+	}
+	else
+	{
+		k_start_ = kappa_v[0];
+		k_start_dot_ = kappa_v[1];
+		k_end_ = kappa_v[2];
+		k_end_dot_ = kappa_v[3];
+	}	
+	ROS_INFO("Set kappa done.");
+}
+
 /// get the interpolated trajectory
 bool Eta3Traj::getTraj(std::vector<nav_msgs::Odometry> &traj,double &d_t)
 {

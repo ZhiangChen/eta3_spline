@@ -31,7 +31,8 @@ int main(int argc, char** argv) {
     eta[4] = 5;
     eta[5] = 5;
 
-    Eta3Traj Et(eta,kappa,0.02);
+    Eta3Traj Et;
+    Et.setEta(eta);
     std::vector<geometry_msgs::PointStamped> poses;
     poses.clear();
     geometry_msgs::PointStamped pose;
