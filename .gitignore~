@@ -1,4 +1,5 @@
-
+*.launch
+src/*.cpp
 
 # Compiled Object files
 *.slo
